@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <link href="./index.css?v=1.0.6" rel="stylesheet">
+</head>
+<body onload="doData()">
+    <div id="modal">
+        <div>
+            <button onclick="yeetModal()">x</button>
+            <h1 id="quote">"Quote"</h1>
+            <h3>-<span id="person">Person</span>, <span id="datum">datum</span></h3>
+            <div id="sContainer">
+                <a href="#" onclick="doShowQuote()" id="showQuote">vem var idioten?</a>
+            </div>
+        </div>
+    </div>
+    <div id="container">
+        <h1>Quotes</h1>
+
+        <h2>Småkul funktioner</h2>
+        <button onclick="getRand()" id="rand">Slumpmässig av alla</button>
+        <button onclick="toggleMode()">toggla festläge</button>
+        <hr>
+        <div id="buttonZone">
+
+        </div>
+
+        <h2>Statistik</h2>
+        <canvas id="QPP" width="400" height="400"></canvas>
+        <small>* klicka på tårtbit för att se dennes quotes</small>
+
+        <div id="QBP">
+            <h2>Quotes av person</h2>
+        </div>
+    </div>
+
+    <div id="metabox"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.2.0/chart.min.js" integrity="sha512-VMsZqo0ar06BMtg0tPsdgRADvl0kDHpTbugCBBrL55KmucH6hP9zWdLIWY//OTfMnzz6xWQRxQqsUFefwHuHyg==" crossorigin="anonymous"></script>
+<script src="./index.js?v=1.1.1"></script>
+</html>
