@@ -112,6 +112,15 @@ const displayQuote = (q) => {
     document.getElementById("quote").innerText = q.quote
     document.getElementById("person").innerText = q.author[0].toLocaleUpperCase() + q.author.substr(1)
     document.getElementById("datum").innerText = q.date
+    console.log(q.context == null)
+    document.documentElement.style.setProperty("--context", q.context == null ? "none" : "inline-block")
+    if(q.context) {
+        document.getElementById("quote-above").style.display = "inherit"
+        console.log("q.context")
+        document.getElementById("quote-context").innerText = q.context.quote
+        document.getElementById("quote-context-author").innerText = q.context.author
+    }
+
     window.scrollTo(0,0)
 
     if(partyMode) document.getElementById("sContainer").style.display = "block"
@@ -201,6 +210,7 @@ const doData = async () => {
                     <li><b>quotefilen tolkad: </b> ${formatText(q.lastUpdated)} </li>
                 </ul>
             `
+            quotes.pop()
             return
         }
 

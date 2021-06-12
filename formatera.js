@@ -1,6 +1,7 @@
 const fs = require("fs")
 const pdf = require("pdf-parse")
 const bl = require("./bl.json")
+const context = require("./context.json")
 let quotes = []
 
 const normalise = (data) => {
@@ -28,15 +29,14 @@ const formatQuotes = (data) => {
     for(quote in qArray) {
         const q = qArray[quote]
         const fQuote = q.match(/("|”)(.+)("|”) (.+) (\w+\/\w+\/\w+)/)
-        if(fQuote && bl.includes(fQuote[2])) {
-
-        }
         fQuote != null ? formatted.push(
             {
+                id: quote,
                 quote: bl.includes(fQuote[2]) ? "denna quote är censurerad" : fQuote[2],
                 author: fQuote[4].toLocaleLowerCase().replace("-",""),
                 date: fQuote[5],
-                ärFörHemsk: bl.includes(fQuote[2])
+                ärFörHemsk: bl.includes(fQuote[2]),
+                context: context[quote] || null
             }
         ) : null
     }
@@ -56,9 +56,11 @@ const concatenateRetardation = () => {
         for(let i = 0; i < files.length; i++) {
             console.log(`   ${files[i]}`)
             const inf = await pdf(fs.readFileSync(files[i]))
-            console.log(`       sidor: ${inf.numpages}\n       skapad: ${fs.statSync(files[0]).birthtime}\n`)
+            console.log(`       sidor: ${inf.numpages}\n       skapad: ${fs.statSync(files[i]).birthtime}\n`)
             data.data += inf.text + "\n"
         }
+
+        console.log("🎉 formatering klar 🎉")
 
         return resolve(data)
     })

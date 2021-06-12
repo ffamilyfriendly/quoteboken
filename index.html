@@ -11,8 +11,21 @@
     <div id="modal">
         <div>
             <button onclick="yeetModal()">x</button>
-            <h1 id="quote">"Quote"</h1>
-            <h3>-<span id="person">Person</span>, <span id="datum">datum</span></h3>
+
+            <div id="context-div">
+                <div id="quote-above" class="quote-context">
+                    <i>
+                        <p id="quote-context">blah blah <br> asdasdasd</p>
+                        <small>-<span id="quote-context-author">person</span></small>
+                    </i>
+                </div>
+    
+                <div id="quotespace">
+                    <h1 id="quote">"Quote"</h1>
+                    <h3>-<span id="person">Person</span>, <span id="datum">datum</span></h3>
+                </div>
+            </div>
+
             <div id="sContainer">
                 <a href="#" onclick="doShowQuote()" id="showQuote">vem var idioten?</a>
             </div>
