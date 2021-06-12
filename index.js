@@ -82,6 +82,27 @@ const doGraph = () => {
 
 document.onscroll = (ev) => {
     yeetModal()
+    const topbtn = document.getElementById("top_btn")
+    const searchThing = document.getElementById("top_search")
+    if(document.getElementById("QPP").getBoundingClientRect().y < window.scrollY) {
+        topbtn.classList.add("scrolled")
+        searchThing.classList.add("scrolled")
+    } else { topbtn.classList = ""; searchThing.classList = "" }
+}
+
+const searchThing = (el) => {
+    const sq = el.value.toLowerCase()
+    const fl = quotes.filter(q => { return q.quote && (q.quote.includes(sq) || q.author.includes(sq)) })
+    //scrollToTop(document.getElementById(fl[0].i).scrollIntoView())
+    if(!fl[0]) return alert("fan ingen aning vad du babblar om")
+    const theElem = document.getElementById(fl[0].i)
+    theElem.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    })
+    
+    theElem.classList.add("targeted")
+    setTimeout(() => theElem.classList.remove("targeted"), 1000 * 10)
 }
 
 const displayQuote = (q) => {
@@ -130,8 +151,16 @@ const getRand = (p) => {
     displayQuote(quote)
 }
 
+const scrollToTop = (pos) => {
+    window.scrollTo({
+        top: pos || 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+}
+
 const formatText = (d) => {
-    const dagar = ["måndagen", "tisdagen", "onsdagen", "torsdagen", "fredagen🍺", "lördagen", "söndagen"]
+    const dagar = ["söndagen", "måndagen", "tisdagen", "onsdagen", "torsdagen", "fredagen🍺", "lördagen"]
     const månader = ["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"]
     const getDayInText = (day) => {
         day = day - 1
@@ -159,10 +188,10 @@ const formatText = (d) => {
 
 const doData = async () => {
 
-    quotes = await (await fetch("./quotes.json")).json()
+    quotes = await (await fetch(`./quotes.json?t=${Date.now()}`)).json()
     const parent = document.getElementById("QBP")
-    quotes.forEach(q => {
-
+    quotes.forEach(( q, index ) => {
+        quotes[index].i = index
         // Detta är metadata och sista quoten, tolka ej som quote! 
         if(q.fileCreated) {
             const metaBox = document.getElementById("metabox")
@@ -181,7 +210,7 @@ const doData = async () => {
             if(personer[q.author] > 1) document.getElementById("buttonZone").innerHTML += `<button onclick='getRand("${q.author}")'>slumpmässig av ${q.author}</button>`
         }
         if(q.ärFörHemsk) return
-        document.getElementById(`${q.author}_lista`).innerHTML += `<li><p>${q.quote}</p><small>${q.date}</small></li>`
+        document.getElementById(`${q.author}_lista`).innerHTML += `<li id="${index}"><p>${q.quote}</p><small>${q.date}</small></li>`
     })
     doGraph()
 }

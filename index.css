@@ -22,6 +22,11 @@ canvas {
     padding-left: 1em;
 }
 
+.quoteList li.targeted {
+    border-left: 3px solid gold;
+    background-color: rgba(241, 245, 10, 0.295);
+}
+
 .quoteList li p, .quoteList li small {
     margin: 0.25em;
 }
@@ -94,9 +99,11 @@ canvas {
     bottom: 0;
     left: 0;
     padding: 0.25rem;
-    animation-duration: 10s;
+    animation-duration: 2s;
     animation-name: dismiss;
     animation-fill-mode: forwards;
+    background-color: white;
+    border: 2px solid black;
 }
 
 #metabox ul {
@@ -107,10 +114,75 @@ canvas {
 @keyframes dismiss {
     0% { transform: 0; }
     50% { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
+    100% { transform: translateX(-110%); }
+}
+
+button {
+    background-color: transparent;
+    border: 1px solid black;
+    border-radius: 0.3rem;
+    margin: 0.2rem;
+}
+
+#top_btn {
+    display: none;
+}
+
+#top_search {
+    display: none;
 }
 
 @media (max-width: 1024px) {
+
+    #top_search {
+        display: flex;
+        justify-content: center;
+        top: 0;
+        left: 0;
+        position: fixed;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.226);
+        padding: 0.5rem;
+        transition: .5s;
+        transform: translateY(-100%);
+    }
+
+    #top_search.scrolled {
+        transform: translateY(0%);
+    }
+
+    #top_search div {
+        min-width: 90%;
+    }
+
+    #top_search div input {
+        border-radius: 0 !important;
+        -webkit-appearance: none;
+        border: 0;
+        padding: 0.25rem;
+        width: 100%;
+    }
+
+    #top_btn {
+        display: block;
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        z-index: 69;
+        transition: .5s;
+        transform: translateX(100%);
+    }
+
+    #top_btn.scrolled {
+        transform: translateX(0%);
+    }
+
+    #top_btn button {
+        background-color: white;
+        border: 3px solid black;
+        margin: 0.5rem;
+    }
+
     #container {
         width: 90%;
     }
