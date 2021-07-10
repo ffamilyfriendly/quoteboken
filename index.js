@@ -13,8 +13,39 @@ const getNrWords = (person) => {
             ord[_ord[i].toLowerCase()]++
         }
     }
-    const oKeys = Object.keys(ord)
+    let oKeys = Object.keys(ord)
+    const smallWords = [
+        "som",
+        "jag",
+        "är",
+        "i",
+        "inte",
+        "en",
+        "det",
+        "du",
+        "ska",
+        "har",
+        "att",
+        "för",
+        "min",
+        "och",
+        "vill",
+        "med",
+        "vi",
+        "så",
+        "bara",
+        "han",
+        "på",
+        "man",
+        "av",
+        "ett",
+        "mig"
+    ]
+    const wordFilter = (ord => {
+        return ord && !smallWords.includes(ord.toLowerCase())
+    })
     oKeys.sort((a,b) => ord[b] - ord[a])
+    oKeys = oKeys.filter(wordFilter)
     const rObj = []
     for(let i = 0; i < 20; i++) {
         rObj.push({ord:oKeys[i], anv:ord[oKeys[i]]})
@@ -143,12 +174,17 @@ document.addEventListener("touchend", (ev) => {
     }
     touch = { start:0, end: 0 }
 })
+const quoteShuffle = (ev) => {
+    if(window.innerWidth - ev.clientX < 50 && ev.clientY > 50) getRand(mode)
+}
 
 const displayQuote = (quote) => {
     document.querySelector("#modal button").style.display = "inherit"
     document.getElementById("modal").style.maxHeight = "100vh"
     document.getElementById("quote").innerText = quote.quote
-    document.getElementById("person").innerText = quote.author[0].toLocaleUpperCase() + quote.author.substr(1)
+    const person = document.getElementById("person")
+    person.innerText = quote.author[0].toLocaleUpperCase() + quote.author.substr(1)
+    person.classList.remove("doShow")
     document.getElementById("datum").innerText = quote.date
     console.log(quote.context == null)
 

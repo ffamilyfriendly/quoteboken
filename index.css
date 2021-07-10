@@ -55,6 +55,7 @@ canvas {
     border: 0;
     background-color: transparent;
     display: none;
+    z-index: 9999;
 }
 
 .party {
@@ -104,6 +105,7 @@ canvas {
     width: 100%;
     z-index: 99;
 
+    justify-content: center;
     align-items: center;
     background-color: rgba(0, 0, 0, 0.274);
 }
