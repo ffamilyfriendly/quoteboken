@@ -1,6 +1,7 @@
 let personer = {}
 let quotes
 let partyMode = false
+let mode = ""
 
 const getNrWords = (person) => {
     const bengt = quotes.filter(q => q.author == person)
@@ -76,49 +77,86 @@ const doGraph = () => {
             onClick: handleClick
         }
     })
-
-    console.log(personer)
 }
+
+const getAllScrolled = () => { return document.querySelectorAll("*[scroll-only]") }
+    
 
 document.onscroll = (ev) => {
-    yeetModal()
-    const topbtn = document.getElementById("top_btn")
-    const searchThing = document.getElementById("top_search")
-    if(document.getElementById("QPP").getBoundingClientRect().y < window.scrollY) {
-        topbtn.classList.add("scrolled")
-        searchThing.classList.add("scrolled")
-    } else { topbtn.classList = ""; searchThing.classList = "" }
+    if(window.scrollY > 30) yeetModal()
+    const scrled = getAllScrolled()
+    if(document.getElementById("QPP").getBoundingClientRect().y < window.scrollY) scrled.forEach(e => e.classList.add("scrolled"))
+    else scrled.forEach(e => e.classList = "") 
 }
 
-const searchThing = (el) => {
-    const sq = el.value.toLowerCase()
-    const fl = quotes.filter(q => { return q.quote && (q.quote.includes(sq) || q.author.includes(sq)) })
-    //scrollToTop(document.getElementById(fl[0].i).scrollIntoView())
-    if(!fl[0]) return alert("fan ingen aning vad du babblar om")
-    const theElem = document.getElementById(fl[0].i)
+const searchData = {
+    results: [],
+    index: 0
+}
+
+const scrollToQuote = (operator) => {
+    switch(operator) {
+        case "+":
+            searchData.index = Math.min(searchData.index + 1, searchData.results.length - 1)
+        break;
+        case "-":
+            searchData.index = Math.max(searchData.index - 1, 0)
+        break;
+    }
+
+    const theElem = document.getElementById(searchData.results[searchData.index].i)
     theElem.scrollIntoView({
         behavior: "smooth",
         block: "center"
     })
     
+    const nrs = document.getElementById("bottom_nav").getElementsByTagName("b")
+    nrs[0].innerText = searchData.index
+
     theElem.classList.add("targeted")
-    setTimeout(() => theElem.classList.remove("targeted"), 1000 * 10)
+    setTimeout(() => theElem.classList.remove("targeted"), 1000 * 2)
 }
 
-const displayQuote = (q) => {
-    console.log(q)
+const searchThing = (el) => {
+    const sq = el.value.toLowerCase()
+    const fl = quotes.filter(q => { return q.quote && (q.quote.includes(sq) || q.author.includes(sq)) })
+    const sn = document.getElementById("bottom_nav")
+    if(!fl[0]) return alert("fan ingen aning vad du babblar om")
+    searchData.results = fl
+    searchData.index = 0
+    sn.querySelectorAll("b")[1].innerText = searchData.results.length - 1
+
+    scrollToQuote()
+}
+
+let touch = { start:0, end: 0 }
+
+document.addEventListener("touchstart", (ev) => {
+    touch.start = ev.changedTouches[0]
+})
+
+document.addEventListener("touchend", (ev) => {
+    if(window.scrollY > 30) return
+    touch.end = ev.changedTouches[0]
+    if(Math.abs(touch.end.screenX - touch.start.screenX) > screen.width / 3) {
+        getRand(mode)
+    }
+    touch = { start:0, end: 0 }
+})
+
+const displayQuote = (quote) => {
     document.querySelector("#modal button").style.display = "inherit"
     document.getElementById("modal").style.maxHeight = "100vh"
-    document.getElementById("quote").innerText = q.quote
-    document.getElementById("person").innerText = q.author[0].toLocaleUpperCase() + q.author.substr(1)
-    document.getElementById("datum").innerText = q.date
-    console.log(q.context == null)
-    document.documentElement.style.setProperty("--context", q.context == null ? "none" : "inline-block")
-    if(q.context) {
-        document.getElementById("quote-above").style.display = "inherit"
-        console.log("q.context")
-        document.getElementById("quote-context").innerText = q.context.quote
-        document.getElementById("quote-context-author").innerText = q.context.author
+    document.getElementById("quote").innerText = quote.quote
+    document.getElementById("person").innerText = quote.author[0].toLocaleUpperCase() + quote.author.substr(1)
+    document.getElementById("datum").innerText = quote.date
+    console.log(quote.context == null)
+
+    document.documentElement.style.setProperty("--context", quote.context == null ? "none" : "inline-block")
+
+    if(quote.context) {
+        document.getElementById("quote-context").innerText = quote.context.quote
+        document.getElementById("quote-context-author").innerText = quote.context.author
     }
 
     window.scrollTo(0,0)
@@ -139,6 +177,7 @@ const doShowQuote = () => {
 }
 
 const getRand = (p) => {
+    mode = p
     let quote
     if(p) {
         let tList = quotes.filter(q => q.author == p)
@@ -203,7 +242,7 @@ const doData = async () => {
         quotes[index].i = index
         // Detta är metadata och sista quoten, tolka ej som quote! 
         if(q.fileCreated) {
-            const metaBox = document.getElementById("metabox")
+            const metaBox = document.getElementById("qMetaBox")
             metaBox.innerHTML = `
                 <ul>
                     <li><b>quotefilen skapad: </b> ${formatText(q.fileCreated)} </li>
@@ -223,6 +262,20 @@ const doData = async () => {
         document.getElementById(`${q.author}_lista`).innerHTML += `<li id="${index}"><p>${q.quote}</p><small>${q.date}</small></li>`
     })
     doGraph()
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => { document.getElementById("button_meta").remove() }, 1000 * 5)
+})
+
+const showMetaThing = (self) => {
+    const mbox = document.getElementById("metabox")
+    mbox.style.display = "flex"
+    self.remove()
+}
+
+const killMetabox = () => {
+    document.getElementById("metabox").remove()
 }
 
 const test = async () => {
