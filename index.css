@@ -245,7 +245,7 @@ button {
     #bottom_nav.scrolled {
         margin: 0;
         display: inline-block;
-        position: sticky;
+        position: fixed;
         bottom: 0;
         left: 0;
     }

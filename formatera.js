@@ -7,9 +7,12 @@ let quotes = []
 const normalise = (data) => {
     let formatted = []
     let chunk = ""
+
+    
+
     for(let r = 0; r < data.length; r++) {
         if(!chunk) chunk = data[r]
-        if((data[r+1] && data[r+1][0] != "\"") && (data[r+1] && data[r+1][0] != "”")) chunk += " " + data[r+1]
+        if( (data[r+1] && data[r+1][0] != "\"") ) chunk += " " + data[r+1]
         else {
             formatted.push(chunk)
             chunk = ""
@@ -18,11 +21,34 @@ const normalise = (data) => {
     return formatted
 }
 
+const secretVal = (s) => {
+    let rv = 0;
+    for(let char of s)
+        rv += char.charCodeAt()
+    return rv
+}
+
+const encrypt = (str) => {
+    const secret = secretVal("secret")
+    let rv = ""
+    for(let char of str)
+        rv += String.fromCharCode(char.charCodeAt() + secret)
+    return rv
+}
+
+const decrypt = (str) => {
+    const secret = secretVal("secret")
+    let rv = ""
+    for(let char of str)
+        rv += String.fromCharCode(char.charCodeAt() - secret)
+    return rv
+}
+
 /**
  * 
  * @param {String} data 
  */
-const formatQuotes = (data) => {
+const formatQuotes = (data, encr) => {
     let formatted = []
     const qArray = normalise(data.split("\n"))
     
@@ -32,7 +58,7 @@ const formatQuotes = (data) => {
         fQuote != null ? formatted.push(
             {
                 id: quote,
-                quote: bl.includes(fQuote[2]) ? "denna quote är censurerad" : fQuote[2],
+                quote: bl.includes(fQuote[2]) ? encr ? encrypt("denna quote är censurerad") : "denna quote är censurerad" : encr ? encrypt(fQuote[2]) : fQuote[2],
                 author: fQuote[4].toLocaleLowerCase().replace("-",""),
                 date: fQuote[5],
                 ärFörHemsk: bl.includes(fQuote[2]),
@@ -45,7 +71,7 @@ const formatQuotes = (data) => {
 }
 
 
-const concatenateRetardation = () => {
+const concatenateQuotes = () => {
     return new Promise( async (resolve,reject) => {
         let data = { birthtime: "", data: "" }
         let files = fs.readdirSync("./")
@@ -67,12 +93,14 @@ const concatenateRetardation = () => {
 }
 
 const handleQuotes = async () => {
-    const data = await concatenateRetardation()
+    const data = await concatenateQuotes()
     console.time("Tolkar quotes")
-    const quotes = formatQuotes(data.data)
+    const reg = /”|“/gm
+    const quotes = formatQuotes(data.data.replaceAll(reg, "\""), process.argv[2] ? true : false)
     console.timeEnd("Tolkar quotes")
-    quotes.push({ fileCreated: data.birthtime, lastUpdated: new Date().toISOString() })
-    fs.writeFileSync("./quotes.json",JSON.stringify(quotes, null, 2)) 
+    quotes.push({ fileCreated: data.birthtime, lastUpdated: new Date().toISOString(), encrypted: process.argv[2] ? true : false })
+    const jsonData = JSON.stringify(quotes, 0, 2)
+    fs.writeFileSync("./quotes.json", jsonData) 
 }
 
 handleQuotes()

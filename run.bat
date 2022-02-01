@@ -1,2 +1,2 @@
-ECHO "files -> server"
-scp quotes.json ./index.* jonathan@jhserver:/media/public/quotes
+ECHO "quoteboken -> server"
+scp quotes.json jonathan@jhserver:/media/public/quotes
